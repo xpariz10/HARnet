@@ -36,7 +36,7 @@ Features:
 Limitace:
 	- overhead inference S4 modelu v residuální funkci - ==vylučuje real-time==
 	- výrazná šumová složka v predikcích
-![Prediction_spectrogram](/assets/images/AR_SSM_v7_spectrogram1).png "AR_SSM_v7_spectrogram1"
+![Prediction_spectrogram](/assets/images/AR_SSM_v7_spectrogram1.png) "AR_SSM_v7_spectrogram1"
 	
 Závěr:
 	- aktuálně nastavené požadavky na real-time jsou nedosažitelné
@@ -45,11 +45,11 @@ Závěr:
 	
 
 #### AR\_SSM\_v7_2
-![AR_SSM_v7_visualisation_1](/assets/images/AR_SSM_v7_visualisation_1).png "AR_SSM_v7_visualisation_1"
+![AR_SSM_v7_visualisation_1](/assets/images/AR_SSM_v7_visualisation_1.png) "AR_SSM_v7_visualisation_1"
 
-![AR_SSM_v7_visualisation_2](/assets/images/AR_SSM_v7_visualisation_2).png "AR_SSM_v7_visualisation_2"
+![AR_SSM_v7_visualisation_2](/assets/images/AR_SSM_v7_visualisation_2.png) "AR_SSM_v7_visualisation_2"
 
-![AR_SSM_v7_visualisation_3](/assets/images/AR_SSM_v7_visualisation_3).png "AR_SSM_v7_visualisation_3"
+![AR_SSM_v7_visualisation_3](/assets/images/AR_SSM_v7_visualisation_3.png) "AR_SSM_v7_visualisation_3"
 
 
 #### AR\_SSM\_v7_4
