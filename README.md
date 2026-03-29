@@ -1,4 +1,3 @@
-
 # Real-time audio signal dropout correction using a neural network
 
 #### Oprava výpadků audio signálů v reálném čase pomocí neuronové sítě
@@ -8,17 +7,17 @@ This repository contains code for
 
 ## Porovnání implementovaných modelů
 
-| Model | NMSE ↓ | Mel-SC ↓ | SDR[dB] ↑ | PEAQ ↑ | t predikce [ms] |
-|---|---|---|---|---|
-| AR\_TCN\_v2           | 0.172  | 0.286 | 7.66 |   -   | 336.21 | ggg
-| AR\_TCN\_v1           | 0.172  | 0.286 | 7.66 |   -   | 336.21 |
-| AR\_SSM\_v7\_4	    | 0.203  | 0.308 | 6.91 |   -   | 417.75 | ggg
-| AR\_SSM\_v7\_2	    | 0.203  | 0.308 | 6.91 |   -   | 417.75 |
-| AR\_SSM\_v7 	 		| 0.282  | 0.371 | 5.97 |   -   | 447.77 |
-| AR\_SSM\_v6 	 		| 0.324  | 0.402 | 5.10 |   -   | 550.34 |
-| AR\_SSM\_v5 	 		| 0.424  | 0.482 | 3.73 |   -   |        |
-| PARCnet IS2 			| 0.302  | 0.136 |  -   | −1.42 |        |
-| PARCnet IS2 (trained) | 0.290  | 0.205 | 9.77 |   -   |        |
+| Model                 | NMSE ↓ | Mel-SC ↓ | SDR[dB] ↑ | PEAQ ↑ | t predikce [ms] |
+|-----------------------|--------|----------|-----------|--------|-----------------|
+| AR\_TCN\_v2           | 0.172  |    0.286 |      7.66 |    -   |          336.21 | ggg
+| AR\_TCN\_v1           | 0.172  |    0.286 |      7.66 |    -   |          336.21 |
+| AR\_SSM\_v7\_4	    | 0.203  |    0.308 |      6.91 |    -   |          417.75 | ggg
+| AR\_SSM\_v7\_2	    | 0.203  |    0.308 |      6.91 |    -   |          417.75 |
+| AR\_SSM\_v7 	 		| 0.282  |    0.371 |      5.97 |    -   |          447.77 |
+| AR\_SSM\_v6 	 		| 0.324  |    0.402 |      5.10 |    -   |          550.34 |
+| AR\_SSM\_v5 	 		| 0.424  |    0.482 |      3.73 |    -   |                 |
+| PARCnet IS2 			| 0.302  |    0.136 |       -   |  −1.42 |                 |
+| PARCnet IS2 (trained) | 0.290  |    0.205 |      9.77 |    -   |                 |
 
 Byly implementovány dva modely, **AR\_SSM s využitím SaShiMi/S4 bloků** pro residuum a **AR\_TCN s využitím TCN encoder-decoder architektury s rekurentním GRU bottle-neckem**.
 
@@ -49,7 +48,7 @@ Závěr:
 
 ![AR_SSM_v7_visualisation_2](/assets/images/AR_SSM_v7_visualisation_2.png)
 
-![AR_SSM_v7_visualisation_3](/assets/images/AR_SSM_v7_visualisation_3.png)
+![AR_SSM_v7_visualisation_3](/assets/images/AR_SSM_v7_visualisation_3.png) 
 
 
 #### AR\_SSM\_v7_4
@@ -211,5 +210,3 @@ Schéma:
 #### AR\_TCN\_v2
 
 - rozšířené řády dilatace pro širší recepční pole [1, 2, 4, 8, 16, 32, 64] - 1017 vzorků 
-
-
