@@ -24,26 +24,26 @@ Byly implementovány dva modely, **AR\_SSM s využitím SaShiMi/S4 bloků** pro 
 
 ## 🆕 AR\_SSM
 
-#### AR\_SSM\_v7
+### AR\_SSM\_v7
 - byl implementován model kombinující AR predikci s residuální SSM sítí využívající S4 bloky
-Features:
+#### Features:
 - vlastní upravená implementace S4 bloků v source kódu
 - warm-up S4 matice
 - ramp-up vážení S4D ve výsledné predikci na začátku restored burstu
 - efektivní cross-fade po vzoru PARCnet
 
-Limitace:
+#### Limitace:
 	- overhead inference S4 modelu v residuální funkci - <ins>vylučuje real-time</ins>
 	- výrazná šumová složka v predikcích
 ![Prediction_spectrogram](/assets/images/AR_SSM_v7_spectrogram1.png)
 	
-Závěr:
+#### Závěr:
 	- aktuálně nastavené požadavky na real-time jsou nedosažitelné
 	- kvůli krátkému dostupnému kontextu při inferenci ani nelze naplno využít potenciál S4 bloků
 	✴️ Navrhuji prozkoumat možnost pomalého, ale malého přesného modelu pro rekostrukci poškozených souborů
 	
 
-#### AR\_SSM\_v7_2
+### AR\_SSM\_v7_2
 ![AR_SSM_v7_visualisation_1](/assets/images/AR_SSM_v7_visualisation_1.png)
 
 ![AR_SSM_v7_visualisation_2](/assets/images/AR_SSM_v7_visualisation_2.png)
@@ -51,7 +51,7 @@ Závěr:
 ![AR_SSM_v7_visualisation_3](/assets/images/AR_SSM_v7_visualisation_3.png) 
 
 
-#### AR\_SSM\_v7_4
+### AR\_SSM\_v7_4
 
 
 
