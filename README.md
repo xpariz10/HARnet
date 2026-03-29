@@ -33,7 +33,7 @@ Features:
 - efektivní cross-fade po vzoru PARCnet
 
 Limitace:
-	- overhead inference S4 modelu v residuální funkci - ==vylučuje real-time==
+	- overhead inference S4 modelu v residuální funkci - <ins>vylučuje real-time</ins>
 	- výrazná šumová složka v predikcích
 ![Prediction_spectrogram](/assets/images/AR_SSM_v7_spectrogram1.png)
 	
