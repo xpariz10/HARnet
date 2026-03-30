@@ -32,6 +32,27 @@ Byly implementovány dva modely, **AR\_SSM s využitím SaShiMi/S4 bloků** pro 
 - ramp-up vážení S4D ve výsledné predikci na začátku restored burstu
 - efektivní crossfade po vzoru PARCnet
 
+#### Limitace:
+- overhead inference S4 modelu v residuální funkci - <ins>vylučuje real-time</ins>
+  - způsoben limitacemi PyTorch - každá iterace spouští 2-3 CUDA kernely - možnost implementace fúzovaného CUDA kernelu po vzoru Mamba
+- výrazná šumová složka v predikcích
+- chybný crossfade na konci doplněného burstu
+- potřeba optimalizovat gain compensation opatření
+![Prediction_spectrogram](/assets/images/AR_SSM_v7_spectrogram1.png)
+	
+#### Závěr:
+- aktuálně nastavené požadavky na real-time jsou nedosažitelné
+- kvůli krátkému dostupnému kontextu při inferenci ani nelze naplno využít potenciál S4 bloků
+✴️ Navrhuji prozkoumat možnost pomalého, ale malého modelu pro inferenci s dlouhým kontextem
+	
+
+### AR\_SSM\_v7_2
+![AR_SSM_v7_visualisation_1](/assets/images/AR_SSM_v7_visualisation_1.png)
+
+### AR\_SSM\_v7_4
+![AR_SSM_v7_4_visualisation_1](/assets/images/AR_SSM_v7_visualisation_1.png)
+
+
 #### Architektura:
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
@@ -76,50 +97,50 @@ Byly implementovány dva modely, **AR\_SSM s využitím SaShiMi/S4 bloků** pro 
 │           │                         │  │ causal_conv      │  │ BATCH    │
 │           │                         │  │ SiLU + LayerNorm │  │          │
 │           │                         │  └────────┬─────────┘  │          │
-│           │                         │           │ z           │          │
+│           │                         │           │ z          │          │
 │           │                         │  ┌────────▼─────────┐  │          │
 │           │                         │  │ S4D state loop   │  │ SEQUENTIAL
 │           │                         │  │ h = A*h + B*z[t] │  │ (512     │
 │           │                         │  │ out = 2Re(C*h)   │  │  steps)  │
 │           │                         │  └────────┬─────────┘  │          │
-│           │                         │           │             │          │
+│           │                         │           │            │          │
 │           │                         │  ┌────────▼─────────┐  │          │
 │           │                         │  │ Gate × S4D out   │  │ BATCH    │
 │           │                         │  │ output_proj      │  │          │
 │           │                         │  │ Tanh [-1, 1]     │  │          │
 │           │                         │  │ × RMS (denorm)   │  │          │
 │           │                         │  └────────┬─────────┘  │          │
-│           │                         │           │             │          │
+│           │                         │           │            │          │
 │           │                         └───────────┼────────────┘          │
 │           │                                     │ s4d_correction        │
 │           │                                     │ (512 samples)         │
 │           ▼                                     ▼                       │
-│   ┌───────────────────────────────────────────────┐                    │
-│   │  concealed = ar_pred[:512] + s4d_correction   │                    │
-│   └───────────────────┬───────────────────────────┘                    │
+│   ┌───────────────────────────────────────────────┐                     │
+│   │  concealed = ar_pred[:512] + s4d_correction   │                     │
+│   └───────────────────┬───────────────────────────┘                     │
 │                       │                                                 │
 │                       ▼                                                 │
-│   ┌─── Post-processing chain ────────────────────┐                    │
-│   │                                               │                    │
-│   │  Fix C: AR envelope compensation              │                    │
-│   │  ├─ Compare 1st-quarter vs 4th-quarter RMS    │                    │
-│   │  └─ If decay > 30%: linear gain ramp (cap 3×) │                    │
-│   │                                               │                    │
-│   │  Fix 4: Inbound crossfade                     │                    │
-│   │  ├─ Burst start:  8 samples (cosine)          │                    │
-│   │  └─ Burst cont: 256 samples (cosine)          │                    │
-│   │                                               │                    │
-│   │  Store _prior_overlap (tail for outbound)     │                    │
-│   │                                               │                    │
-│   │  Fix 6: Post-prediction gain matching         │                    │
-│   │  └─ If output RMS outside [0.7, 1.4]×context  │                    │
-│   │     → scale to match                          │                    │
-│   │                                               │                    │
-│   └───────────────────┬───────────────────────────┘                    │
+│   ┌─── Post-processing chain ─────────────────────┐                     │
+│   │                                               │                     │
+│   │  Fix C: AR envelope compensation              │                     │
+│   │  ├─ Compare 1st-quarter vs 4th-quarter RMS    │                     │
+│   │  └─ If decay > 30%: linear gain ramp (cap 3×) │                     │
+│   │                                               │                     │
+│   │  Fix 4: Inbound crossfade                     │                     │
+│   │  ├─ Burst start:  8 samples (cosine)          │                     │
+│   │  └─ Burst cont: 256 samples (cosine)          │                     │
+│   │                                               │                     │
+│   │  Store _prior_overlap (tail for outbound)     │                     │
+│   │                                               │                     │
+│   │  Fix 6: Post-prediction gain matching         │                     │
+│   │  └─ If output RMS outside [0.7, 1.4]×context  │                     │
+│   │     → scale to match                          │                     │
+│   │                                               │                     │
+│   └───────────────────┬───────────────────────────┘                     │
 │                       │                                                 │
 │                       ▼                                                 │
-│              Write to ring buffer                                      │
-│              Return concealed (512 samples)                            │
+│              Write to ring buffer                                       │
+│              Return concealed (512 samples)                             │
 └─────────────────────────────────────────────────────────────────────────┘
 S4ResidualBlock internal pipeline:
 
@@ -139,9 +160,9 @@ SiLU ─────────────────────────
 LayerNorm(64)                                         SiLU(gate)
     │                                                      │
     ▼                                                      │
-S4DLayer(d=64, N=64)                                      │
-    │  h[t+1] = A_bar ⊙ h[t] + B_bar * u[t]              │
-    │  y[t]   = 2·Re(C · h[t]) + D · u[t]                 │
+S4DLayer(d=64, N=64)                                       │
+    │  h[t+1] = A_bar ⊙ h[t] + B_bar * u[t]                │
+    │  y[t]   = 2·Re(C · h[t]) + D · u[t]                  │
     │                                                      │
     ▼                                                      │
     ×  ◄───────────────────────────────────────────────────┘
@@ -159,25 +180,6 @@ Slice last pred_dim (768) samples
 (B, 1, 768) output
 
 ```
-#### Limitace:
-- overhead inference S4 modelu v residuální funkci - <ins>vylučuje real-time</ins>
-  - způsoben limitacemi PyTorch - každá iterace spouští 2-3 CUDA kernely - možnost implementace fúzovaného CUDA kernelu po vzoru Mamba
-- výrazná šumová složka v predikcích
-- chybný crossfade na konci doplněného burstu
-- potřeba optimalizovat gain compensation opatření
-![Prediction_spectrogram](/assets/images/AR_SSM_v7_spectrogram1.png)
-	
-#### Závěr:
-- aktuálně nastavené požadavky na real-time jsou nedosažitelné
-- kvůli krátkému dostupnému kontextu při inferenci ani nelze naplno využít potenciál S4 bloků
-✴️ Navrhuji prozkoumat možnost pomalého, ale malého modelu pro inferenci s dlouhým kontextem
-	
-
-### AR\_SSM\_v7_2
-![AR_SSM_v7_visualisation_1](/assets/images/AR_SSM_v7_visualisation_1.png)
-
-### AR\_SSM\_v7_4
-![AR_SSM_v7_4_visualisation_1](/assets/images/AR_SSM_v7_visualisation_1.png)
 
 
 
@@ -202,8 +204,15 @@ Slice last pred_dim (768) samples
 - cross-band podmiňování - výstup GRU v high-band podmíněn výstupem low-band GRU
 - ONNX Runtime (časová úspora 3-5x)
 
-  
-Struktura celé architektury
+
+
+
+### AR\_TCN\_S\_v1
+![AR_TCN_S_v1_visualisation_1](/assets/images/AR_TCN_S_v1_visualisation_1.png)
+
+![Prediction_spectrogram2](/assets/images/AR_TCN_S_v1_spectrogram1.png)
+
+#### Architektura:
 ```
 ╔═══════════════════════════════════════════════════════════════════════════╗
 ║                     HYBRID AR + TCN/GRU PLC SYSTEM                        ║
