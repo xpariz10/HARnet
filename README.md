@@ -208,9 +208,9 @@ Slice last pred_dim (768) samples
 
 
 ### AR\_TCN\_S\_v1
-![AR_TCN_S_v1_visualisation_1](/assets/images/AR_TCN_S_v1_visualisation_1.png)
+![AR_TCN_S_v1_visualisation_1](/assets/images/TCN_S_v1_visualisation_1.png)
 
-![Prediction_spectrogram2](/assets/images/AR_TCN_S_v1_spectrogram1.png)
+![Prediction_spectrogram2](/assets/images/TCN_S_v1_spectrogram_1.png)
 
 #### Architektura:
 ```
