@@ -9,6 +9,7 @@ This repository contains code for
 
 | Model                 | NMSE ↓ | Mel-SC ↓ | SDR[dB] ↑ | PEAQ ↑ | t predikce [ms] |
 |-----------------------|--------|----------|-----------|--------|-----------------|
+| AR\_TCN\_S\_v2        | 0.130  |    0.236 |      8.86 |    -   |           39.25 |
 | AR\_TCN\_S\_v1        | 0.230  |    0.307 |      6.39 |    -   |           45.43 |
 | AR\_TCN\_v2           | 0.201  |    0.302 |      6.97 |    -   |          447.18 |
 | AR\_TCN\_v1           | 0.172  |    0.286 |      7.66 |    -   |          336.21 |
@@ -20,10 +21,14 @@ This repository contains code for
 | PARCnet IS2 			| 0.302  |    0.136 |       -   |  −1.42 |                 |
 | PARCnet IS2 (trained) | 0.290  |    0.205 |      8.77 |    -   |                 |
 
-Byly implementovány dva modely, **AR\_SSM s využitím SaShiMi/S4 bloků** pro residuum a **AR\_TCN s využitím TCN encoder-decoder architektury s rekurentním GRU bottle-neckem**.
+## 🆕 Update 9-4-26
 
+#### AR_TCN:
+- nová verze cross-fade - adaptivní délka, WSOLA pro lepší fázové napojení
+- AR\_TCN\_S\_v2
+- ONNX Export - problém
 
-## 🆕 AR\_SSM
+## AR\_SSM
 - byl implementován model kombinující AR predikci s residuální SSM sítí využívající S4 bloky
 
 #### Features:
